@@ -6,7 +6,7 @@ import (
 )
 
 type MutexManager struct {
-	mutexes         sync.Map
+	mutexes         map[string]*mutexWithTime
 	mutexesLock     sync.Mutex
 	cleanupInterval time.Duration
 	expiration      time.Duration
@@ -19,7 +19,7 @@ type mutexWithTime struct {
 
 func NewMutexManager(cleanupInterval, expiration time.Duration) *MutexManager {
 	mm := &MutexManager{
-		mutexes:         sync.Map{},
+		mutexes:         make(map[string]*mutexWithTime, 100),
 		cleanupInterval: cleanupInterval,
 		expiration:      expiration,
 	}
@@ -31,17 +31,16 @@ func (mm *MutexManager) GetMutex(roomID string) *sync.Mutex {
 	mm.mutexesLock.Lock()
 	defer mm.mutexesLock.Unlock()
 
-	if val, ok := mm.mutexes.Load(roomID); ok {
-		roomMutex := val.(*mutexWithTime)
+	if roomMutex, ok := mm.mutexes[roomID]; ok {
 		roomMutex.lastUsed = time.Now()
 		return roomMutex.mu
 	}
 
 	m := &sync.Mutex{}
-	mm.mutexes.Store(roomID, &mutexWithTime{
+	mm.mutexes[roomID] = &mutexWithTime{
 		mu:       m,
 		lastUsed: time.Now(),
-	})
+	}
 	return m
 }
 
@@ -59,11 +58,9 @@ func (mm *MutexManager) cleanupMutexes() {
 	defer mm.mutexesLock.Unlock()
 
 	now := time.Now()
-	mm.mutexes.Range(func(key, value any) bool {
-		roomMutex := value.(*mutexWithTime)
-		if now.Sub(roomMutex.lastUsed) > mm.expiration {
-			mm.mutexes.Delete(key)
+	for k, v := range mm.mutexes {
+		if now.Sub(v.lastUsed) > mm.expiration {
+			delete(mm.mutexes, k)
 		}
-		return true
-	})
+	}
 }
