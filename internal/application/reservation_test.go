@@ -12,6 +12,7 @@ import (
 	"github.com/ynuraddi/test-kami/internal"
 	mock_application "github.com/ynuraddi/test-kami/internal/application/mock"
 	"github.com/ynuraddi/test-kami/internal/domain"
+	mock_domain "github.com/ynuraddi/test-kami/internal/domain/mock"
 )
 
 func Test_CreateReservation(t *testing.T) {
@@ -19,7 +20,7 @@ func Test_CreateReservation(t *testing.T) {
 	defer ctrl.Finish()
 
 	txManager := mock_application.NewMockTransaction(ctrl)
-	repo := mock_application.NewMockReservationRepository(ctrl)
+	repo := mock_domain.NewMockReservationRepository(ctrl)
 
 	service := NewReservationService(repo, txManager)
 
@@ -213,7 +214,7 @@ func Test_ListByRoom(t *testing.T) {
 	defer ctrl.Finish()
 
 	txManager := mock_application.NewMockTransaction(ctrl)
-	repo := mock_application.NewMockReservationRepository(ctrl)
+	repo := mock_domain.NewMockReservationRepository(ctrl)
 
 	service := NewReservationService(repo, txManager)
 
@@ -233,8 +234,8 @@ func Test_ListByRoom(t *testing.T) {
 
 	defaultReservations := []domain.Reservation{
 		{
-			ID:       1,
-			RoomUUID: "1",
+			ID:     1,
+			RoomID: "1",
 			TimeRange: domain.TimeRange{
 				Start: now,
 				End:   now.Add(1 * time.Minute),

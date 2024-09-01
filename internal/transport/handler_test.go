@@ -151,12 +151,12 @@ func Test_ListByRoom(t *testing.T) {
 	defaultReservations = append(defaultReservations,
 		domain.Reservation{
 			ID:        1,
-			RoomUUID:  domain.RoomID(defaultRoomID),
+			RoomID:    domain.RoomID(defaultRoomID),
 			TimeRange: domain.TimeRange{Start: from, End: to},
 		},
 		domain.Reservation{
 			ID:        2,
-			RoomUUID:  domain.RoomID(defaultRoomID),
+			RoomID:    domain.RoomID(defaultRoomID),
 			TimeRange: domain.TimeRange{Start: to, End: to.Add(time.Minute)},
 		})
 
@@ -184,7 +184,7 @@ func Test_ListByRoom(t *testing.T) {
 
 				for i := range reservations {
 					assert.Equal(t, defaultReservations[i].ID, reservations[i].ID)
-					assert.Equal(t, string(defaultReservations[i].RoomUUID), reservations[i].RoomID)
+					assert.Equal(t, string(defaultReservations[i].RoomID), reservations[i].RoomID)
 					assert.Equal(t, defaultReservations[i].TimeRange.Start, reservations[i].StartTime.Time)
 					assert.Equal(t, defaultReservations[i].TimeRange.End, reservations[i].EndTime.Time)
 				}

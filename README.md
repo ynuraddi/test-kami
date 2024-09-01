@@ -1,7 +1,8 @@
 # Документация
 
 ### Запуск приложения ***docker-compose***
-    ```make run```
+    make run
 
 ### Запуск тестов
-    ```make test```
+    make test
+

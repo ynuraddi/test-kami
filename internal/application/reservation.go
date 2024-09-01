@@ -12,20 +12,26 @@ type Transaction interface {
 	Execute(ctx context.Context, f func(txCtx context.Context) error, options pgx.TxOptions) error
 }
 
-type ReservationRepository interface {
-	Create(ctx context.Context, roomID domain.RoomID, timeRange domain.TimeRange) error
-	ListByRoom(ctx context.Context, roomID domain.RoomID) ([]domain.Reservation, error)
-}
-
 type reservationService struct {
-	repo ReservationRepository
+	repo domain.ReservationRepository
 	tx   Transaction
+
+	// это такой оркестратор
+	// я собираюсь разделить транзакции по комнатам
+	// я подумал что в рамках текущей логики комнаты никак не конфликтуют между собой
+	// поэтому сериализовать можно операции по комнатам
+	//
+	// такое решение сложно не масштабируемое, потому что нужна согласованность между репликами
+	// в таком случае лучше использовать брокер сообщений
+	roomMutex *MutexManager
 }
 
-func NewReservationService(repo ReservationRepository, tx Transaction) *reservationService {
+func NewReservationService(repo domain.ReservationRepository, tx Transaction) *reservationService {
 	return &reservationService{
 		repo: repo,
 		tx:   tx,
+
+		roomMutex: NewMutexManager(time.Minute, time.Minute),
 	}
 }
 
@@ -38,6 +44,10 @@ func (s reservationService) ReserveRoom(ctx context.Context, roomID string, from
 	if err != nil {
 		return err
 	}
+
+	mu := s.roomMutex.GetMutex(roomID)
+	mu.Lock()
+	defer mu.Unlock()
 
 	return s.tx.Execute(ctx, func(txCtx context.Context) error {
 		reservations, err := s.ListByRoom(txCtx, roomID)
@@ -57,7 +67,7 @@ func (s reservationService) ReserveRoom(ctx context.Context, roomID string, from
 
 		return s.repo.Create(txCtx, rid, tr)
 	}, pgx.TxOptions{
-		IsoLevel:       pgx.Serializable,
+		IsoLevel:       pgx.RepeatableRead,
 		AccessMode:     pgx.ReadWrite,
 		DeferrableMode: pgx.NotDeferrable,
 	})

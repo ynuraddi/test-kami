@@ -1,10 +1,9 @@
 test: mock
 	golangci-lint run ./...
-	go test ./... -v
+	go test ./... -v -count=1
 
 mock:
-	mockgen -source=./internal/infrastructure/postgres/repository.go -destination=./internal/infrastructure/postgres/mock/repository_mock.go
-	mockgen -source=./internal/infrastructure/postgres/transaction.go -destination=./internal/infrastructure/postgres/mock/transaction_mock.go
+	mockgen -source=./internal/domain/repository.go -destination=./internal/domain/mock/repository_mock.go
 	mockgen -source=./internal/application/reservation.go -destination=./internal/application/mock/mock.go
 	mockgen -source=./internal/transport/handler.go -destination=./internal/transport/mock/mock.go
 

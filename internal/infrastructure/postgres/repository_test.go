@@ -102,8 +102,8 @@ func Test_ListByRoom(t *testing.T) {
 
 	reservationsColumns := []string{"id", "room_id", "start_time", "end_time"}
 	defaultReservation := domain.Reservation{
-		ID:       1,
-		RoomUUID: defaultRoomID,
+		ID:     1,
+		RoomID: defaultRoomID,
 		TimeRange: domain.TimeRange{
 			Start: from,
 			End:   to,
@@ -136,7 +136,7 @@ func Test_ListByRoom(t *testing.T) {
 					WillReturnRows(pgxmock.NewRows(reservationsColumns).
 						AddRow(
 							defaultReservation.ID,
-							defaultReservation.RoomUUID,
+							defaultReservation.RoomID,
 							defaultReservation.TimeRange.Start,
 							defaultReservation.TimeRange.End,
 						))
@@ -172,7 +172,7 @@ func Test_ListByRoom(t *testing.T) {
 					WillReturnRows(pgxmock.NewRows(reservationsColumns).
 						AddRow(
 							"incorrect value",
-							defaultReservation.RoomUUID,
+							defaultReservation.RoomID,
 							defaultReservation.TimeRange.Start,
 							defaultReservation.TimeRange.End,
 						))

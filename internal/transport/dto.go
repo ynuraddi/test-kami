@@ -42,7 +42,7 @@ type reservation struct {
 func newResevation(r domain.Reservation) reservation {
 	return reservation{
 		ID:        r.ID,
-		RoomID:    string(r.RoomUUID),
+		RoomID:    string(r.RoomID),
 		StartTime: ReservationTime{r.TimeRange.Start},
 		EndTime:   ReservationTime{r.TimeRange.End},
 	}

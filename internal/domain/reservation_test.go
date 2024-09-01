@@ -36,8 +36,8 @@ func Test_Reservation(t *testing.T) {
 			checkResult: func(t *testing.T, reservation Reservation, err error) {
 				assert.NoError(t, err)
 				assert.Equal(t, Reservation{
-					ID:       defaultArgs.id,
-					RoomUUID: RoomID(defaultArgs.roomId),
+					ID:     defaultArgs.id,
+					RoomID: RoomID(defaultArgs.roomId),
 					TimeRange: TimeRange{
 						Start: defaultArgs.from,
 						End:   defaultArgs.to,

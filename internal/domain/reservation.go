@@ -9,7 +9,7 @@ import (
 
 type Reservation struct {
 	ID        int64
-	RoomUUID  RoomID
+	RoomID    RoomID
 	TimeRange TimeRange
 }
 
@@ -32,7 +32,7 @@ func NewReservation(id int64, roomUUID string, from, to time.Time) (Reservation,
 
 	return Reservation{
 		ID:        id,
-		RoomUUID:  rID,
+		RoomID:    rID,
 		TimeRange: tr,
 	}, nil
 }

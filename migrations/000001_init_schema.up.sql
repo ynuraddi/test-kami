@@ -4,3 +4,7 @@ CREATE TABLE IF NOT EXISTS "reservations" (
     start_time timestamp not null,
     end_time timestamp not null
 );
+
+CREATE INDEX idx_reservations_room ON reservations (room_id);
+
+CREATE INDEX idx_reservations_room_start_end ON reservations (room_id, start_time, end_time);

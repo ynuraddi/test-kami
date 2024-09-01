@@ -53,7 +53,7 @@ func (r reservations) ListByRoom(ctx context.Context, roomID domain.RoomID) ([]d
 		var reservation domain.Reservation
 		if err := rows.Scan(
 			&reservation.ID,
-			&reservation.RoomUUID,
+			&reservation.RoomID,
 			&reservation.TimeRange.Start,
 			&reservation.TimeRange.End,
 		); err != nil {
