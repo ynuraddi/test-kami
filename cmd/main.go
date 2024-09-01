@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -22,7 +23,10 @@ func init() {
 }
 
 func main() {
-	cfg, err := config.MustLoad()
+	configFilePath := flag.String("config", "", "Path to the configuration file")
+	flag.Parse()
+
+	cfg, err := config.Load(*configFilePath)
 	if err != nil {
 		panic(err)
 	}

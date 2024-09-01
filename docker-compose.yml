@@ -10,3 +10,15 @@ services:
     ports:
       - "5432:5432"
     restart: always
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - docker.env
+    restart: always
+    depends_on:
+      - db

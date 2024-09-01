@@ -13,11 +13,13 @@ type Config struct {
 	} `yaml:"http"`
 }
 
-func MustLoad() (*Config, error) {
+func Load(configPath string) (*Config, error) {
 	var cfg Config
 
-	if err := cleanenv.ReadConfig("./local.yaml", &cfg); err != nil {
-		return nil, err
+	if len(configPath) > 0 {
+		if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := cleanenv.ReadEnv(&cfg); err != nil {
