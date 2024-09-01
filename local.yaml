@@ -1,0 +1,3 @@
+postgres:
+  dsn: "postgresql://user:1234@localhost:5432/kami?sslmode=disable"
+  migration_url: "file://migrations"
